@@ -6,16 +6,37 @@ const {shuffleArray} = require('./utils')
 
 app.use(express.json())
 
+
+
+
+// include and initialize the rollbar library with your access token
+const Rollbar = require('rollbar')
+const rollbar = new Rollbar({
+  accessToken: '3fc6bf6a4afa42369843b524b8839042',
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+})
+
+// record a generic message and send it to Rollbar
+rollbar.log('Hello world!')
+rollbar.log("I am a new log to test rollbar connection")
+
 app.get('/', (req, res)=>{
     res.sendFile(path.join(__dirname, './public/index.html'))
+    rollbar.info('HTML file serverd successfully', {author: 'Senad', type: 'Manual Entry'})
+
 })
 
 app.get('/styles', (reg, res)=>{
     res.sendFile(path.join(__dirname, './public/index.css'))
+    rollbar.info('CSS file serverd successfully', {author: 'Senad', type: 'Manual Entry'})
+
 })
 
 app.get('/js', (req, res)=>{
     res.sendFile(path.join(__dirname, './public/index.js'))
+    rollbar.info('JS file serverd successfully', {author: 'Senad', type: 'Manual Entry'})
+
 })
 
 app.get('/api/robots', (req, res) => {
@@ -32,8 +53,10 @@ app.get('/api/robots/five', (req, res) => {
         let shuffled = shuffleArray(bots)
         let choices = shuffled.slice(0, 5)
         let compDuo = shuffled.slice(6, 8)
+        rollbar.info('Array of five bots was served', {author: 'Senad', type: 'Manual Entry'})
         res.status(200).send({choices, compDuo})
     } catch (error) {
+        rollbar.critical('Array of five bots was not served', {author: 'Senad', type: 'Manual Entry'})
         console.log('ERROR GETTING FIVE BOTS', error)
         res.sendStatus(400)
     }
@@ -80,6 +103,9 @@ app.get('/api/player', (req, res) => {
 })
 
 const port = process.env.PORT || 3000
+
+app.use(rollbar.errorHandler())
+
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`)
