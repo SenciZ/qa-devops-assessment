@@ -24,7 +24,6 @@ rollbar.log("I am a new log to test rollbar connection")
 app.get('/', (req, res)=>{
     res.sendFile(path.join(__dirname, './public/index.html'))
     rollbar.info('HTML file serverd successfully', {author: 'Senad', type: 'Manual Entry'})
-
 })
 
 app.get('/styles', (reg, res)=>{
@@ -36,7 +35,6 @@ app.get('/styles', (reg, res)=>{
 app.get('/js', (req, res)=>{
     res.sendFile(path.join(__dirname, './public/index.js'))
     rollbar.info('JS file serverd successfully', {author: 'Senad', type: 'Manual Entry'})
-
 })
 
 app.get('/api/robots', (req, res) => {
